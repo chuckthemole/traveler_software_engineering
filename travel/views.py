@@ -50,15 +50,13 @@ def dashboard(request):
         if not user.is_authenticated:
             return redirect("travel:login")
         else:
-            #my_problems = Problem.objects.filter(coder=user.coder.id)   # Problem table has a coder field (FK)
-            #my_scripts =  Script.objects.filter(coder=user.coder.id)
+            my_locations = Location.objects.filter(traveler=user.traveler.id)   # Problem table has a coder field (FK)
 
             print('*********** Testing objs retrieved from DB ************')
-            #print('my_problems:', my_problems)
-            #print('my_scripts:', my_scripts)
+            print('my_locations:', my_locations)
             print('*******************************')
 
-            return render(request, "travel/dashboard.html")
+            return render(request, "travel/dashboard.html", {"my_locations": my_locations })
 
 def create(request):
     if request.method == "POST":
@@ -188,4 +186,7 @@ def delete_review(request, review_id):
     pass
 
 def create_comment(request, review_id):
+    pass
+
+def show_my_location(request, location_id):
     pass

@@ -23,6 +23,7 @@ urlpatterns = [
     #Location
     path('location/create', views.create_location, name='create_location'),
     path('location/<int:location_id>/show', views.show_location, name='show_location'),
+    path('location/<int:problem_id>/show_my_location', views.show_my_location, name='show_my_location'), 
     path('location/<int:location_id>/edit', views.edit_location, name='edit_location'),
     path('location/<int:location_id>/update', views.update_location, name='update_location'),
     path('location/<int:location_id>/delete', views.delete_location, name='delete_location'),
