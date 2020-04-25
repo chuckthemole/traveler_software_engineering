@@ -14,13 +14,15 @@ urlpatterns = [
     path('signup', views.signup, name='signup'),
 
     #Destination
-    path('destination/create', views.create_destination, name='create_destination'),
+    path('destination/<int:location_id>/publish', views.publish_destination, name='publish_destination'),
+    path('destination/<int:location_id>/create', views.create_destination, name='create_destination'),
     path('destination/<int:destination_id>/show', views.show_destination, name='show_destination'),
     path('destination/<int:destination_id>/edit', views.edit_destination, name='edit_destination'),
     path('destination/<int:destination_id>/update', views.update_destination, name='update_destination'),
     path('destination/<int:destination_id>/delete', views.delete_destination, name='delete_destination'),
 
     #Location
+    path('location/publish', views.publish_location, name='publish_location'),
     path('location/create', views.create_location, name='create_location'),
     path('location/<int:location_id>/show', views.show_location, name='show_location'),
     path('location/<int:location_id>/edit', views.edit_location, name='edit_location'),

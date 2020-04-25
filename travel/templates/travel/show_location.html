@@ -33,6 +33,8 @@ scripts: {{scripts}} <br>
                     </div>
                 </div>
 
+                <a class="button is-primary is-medium" href="{% url 'travel:publish_destination' location.id %}">Make a destination</a>
+                
                 {% if user.id == location.traveler.user.id %}
                  <a class="button is-primary is-medium" href="{% url 'travel:edit_location' location.id %}">Make changes ... </a>
                     {% endif %}
