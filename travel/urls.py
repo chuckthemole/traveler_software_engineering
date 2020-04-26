@@ -30,6 +30,7 @@ urlpatterns = [
     path('location/<int:location_id>/delete', views.delete_location, name='delete_location'),
 
     #Review
+    path('review/<int:destination_id>/publish', views.publish_review, name='publish_review'),
     path('review/<int:destination_id>/create', views.create_review, name='create_review'),
     path('review/<int:review_id>/show', views.show_review, name='show_review'),
     path('review/<int:review_id>/edit', views.edit_review, name='edit_review'),
@@ -37,6 +38,6 @@ urlpatterns = [
     path('review/<int:review_id>/delete', views.delete_review, name='delete_review'),
 
     #Comment
+    path('comment/<int:review_id>/publish', views.publish_comment, name='publish_comment'),
     path('comment/<int:review_id>/create', views.create_comment, name='create_comment'),
-
 ]
