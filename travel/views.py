@@ -236,13 +236,68 @@ def show_location(request, location_id):
             return render(request, "travel/show_location.html", {"user":user, "location":location, "destinations":destinations})
 
 def edit_location(request, location_id):
-    pass
+   if request.method == "GET":
+        user = request.user
+        if not user.is_authenticated:
+            return redirect("share:login")
+
+        location = get_object_or_404(Location, pk=location_id)
+        # destinations = Destination.objects.filter(location=location_id)
+
+        if location.traveler.user.id == location.traveler.user.id:
+            return render(request, "travel/edit_location.html", {"location":location})
+        else:
+            return render(request, "travel/index.html",
+            {"error":"You are not the author of the location that you tried to edit."})
 
 def update_location(request, location_id):
-    pass
+    if request.method == "POST":
+        user = request.user
+        if not user.is_authenticated:
+            return HttpResponse(status=500)
+
+        location = get_object_or_404(Location, pk=location_id)
+        # destinations = Destination.objects.filter(location=location_id)
+
+        if not request.POST["country"] or not request.POST["city"]:
+            return render(request, "travel/edit_location.html", {"location":location,
+            "error":"One of the required fields was empty"})
+
+        else:
+            country = request.POST["country"]
+            city  = request.POST["city"]
+
+            if location.traveler.user.id == user.id:
+                Location.objects.filter(pk=location_id).update(country=country,city=city)
+                return redirect("travel:dashboard")
+
+            else:
+                return render(request, "travel/edit_location.html",{"location":location, "error":"Can't update!"})
+
+    else:
+        # the user enteing    http://127.0.0.1:8000/problem/8/update
+        user = request.user
+        all_locations = Location.objects.all()
+        return render(request, "travel/index.html", {"user":user, "all_locations": all_locations, "error":"Can't update!"})
 
 def delete_location(request, location_id):
-    pass
+    if request.method == "POST":
+        user = request.user
+        if not user.is_authenticated:
+            return HttpResponse(status=500)
+
+        location = get_object_or_404(Location, pk=location_id)
+        # destinations = Destination.objects.filter(location=location_id)
+
+        if location.traveler.user.id == user.id:
+            Location.objects.get(pk=location_id).delete()
+            return redirect("travel:dashboard")
+        else:
+            all_locations = Location.objects.all()
+            return render(request, "travel/index.html", {"user":user, "all_locations": all_locations, "error":"Can't delete!"})
+
+    else:
+        return HttpResponse(status=500)
 
 # Reviews
 def publish_review(request, destination_id):

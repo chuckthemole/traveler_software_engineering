@@ -16,12 +16,12 @@ class Traveler(models.Model):
 class Location(models.Model):
 	def __str__(self):
 		return self.city
+
 	def num_of_destinations(self):
 		destinations = Destination.objects.filter(location=self)
 		return len(destinations)
 	#FK
 	traveler = models.ForeignKey(Traveler, on_delete=models.CASCADE)
-
 	country = models.TextField(max_length=30, null=False, blank=False, unique=False)
 	city = models.TextField(max_length=30, null=False, blank=False, unique=False)
 	#image = models.ImageField(upload_to='myproblems/', blank=True)
