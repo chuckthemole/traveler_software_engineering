@@ -50,6 +50,7 @@ def dashboard(request):
         if not user.is_authenticated:
             return redirect("travel:login")
         else:
+            my_locations = Location.objects.filter(traveler=user.traveler.id)
             #my_problems = Problem.objects.filter(coder=user.coder.id)   # Problem table has a coder field (FK)
             #my_scripts =  Script.objects.filter(coder=user.coder.id)
             
@@ -60,14 +61,18 @@ def dashboard(request):
             #print('my_scripts:', my_scripts)
             print('*******************************')
 
+<<<<<<< HEAD
             return render(request, "travel/dashboard.html", {"user":user, "my_locations": my_locations})
+=======
+            return render(request, "travel/dashboard.html", {"user":user, "my_locations":my_locations})
+>>>>>>> master
 
 def create(request):
     if request.method == "POST":
         username = request.POST['username']
         email = request.POST['email']
         password = request.POST['password']
-        traveler_yet = request.POST['coder_yet_checkbox']
+        traveler_yet = request.POST['traveler_yet']
 
         if username is not None and email is not None and password is not None: # checking that they are not None
             if not username or not email or not password: # checking that they are not empty
@@ -118,8 +123,52 @@ def logout_view(request):
     logout(request)
     return redirect("travel:login")
 
-def create_destination(request):
-    pass
+# Destinations
+def publish_destination(request, location_id):
+    if request.method == "GET":
+        user = request.user
+        if not user.is_authenticated:
+            return redirect("travel:login")
+        else:
+            location = get_object_or_404(Location, pk=location_id)
+            return render(request, "travel/create_destination.html", {"user":user, "location":location} )
+
+def create_destination(request, location_id):
+    if request.method == "POST":
+        user = request.user
+        if not user.is_authenticated:
+            return redirect("travel:login")
+
+        location = get_object_or_404(Location, pk=location_id)
+
+        if not request.POST["title"]:
+            return render(request, "travel/create_destination.html", {"user":user, "location":location, "error":"Please fill in all required fields"})
+        else:
+            #Traveler, Location, address, zip, title, description
+            traveler = user.traveler
+            address = request.POST["address"]
+            zip_code = request.POST["zip_code"]
+            title = request.POST["title"]
+            description = request.POST["description"]
+
+        #if not zip_code and not title and not description:
+        #    return render(request, "travel/create_destination.html", {"user":user, "location":location, "error":"Please fill in all required fields"})
+
+        try:
+            destination = Destination.objects.create(traveler=traveler, location=location, address=address, zip_code=zip_code, title=title, description=description)
+            destination.save()
+            destination = get_object_or_404(Destination, pk=destination.id)
+            location = get_object_or_404(Location, pk=location_id)
+            reviews = Review.objects.filter(destination=destination.id)
+            return render(request, "travel/show_destination.html", {"traveler":traveler, "user":user, "location":location, "destination": destination, "reviews": reviews})
+
+        except:
+            return render(request, "travel/create_destination.html", {"error":"Can't create the destination"})
+
+    else:
+        user = request.user
+        all_locations = Location.objects.all()
+        return render(request, "travel/index.html", {"user":user, "all_locations": all_locations, "error":"Can't create!"})
 
 def show_destination(request, destination_id):
     if request.method == "GET":
@@ -141,8 +190,44 @@ def update_destination(request, destination_id):
 def delete_destination(request, destination_id):
     pass
 
+# Locations
+def publish_location(request):
+    if request.method == "GET":
+        user = request.user
+        if not user.is_authenticated:
+            return redirect("travel:login")
+        else:
+            return render(request, "travel/create_location.html", {"user":user} )
+
 def create_location(request):
-    pass
+    if request.method == "POST":
+        user = request.user
+        if not user.is_authenticated:
+            return redirect("travel:login")
+
+        traveler = user.traveler
+        country = request.POST["country"]
+        city = request.POST["city"]
+        is_my_location = request.POST.get('is_my_location', False)
+        is_visiting = request.POST.get('is_visiting', False)
+
+        if not country and not city:
+            return render(request, "travel/create_location.html", {"error":"Please fill in all required fields"})
+
+        try:
+            location = Location.objects.create(traveler=traveler, country=country, city=city, is_my_location=is_my_location, is_visiting=is_visiting)
+            location.save()
+            location = get_object_or_404(Location, pk=location.id)
+            destination = Destination.objects.filter(location=location.id)
+            return render(request, "travel/show_location.html",{"user":user, "location":location, "destination": destination})
+
+        except:
+            return render(request, "travel/create_location.html", {"error":"Can't create the location"})
+
+    else:
+        user = request.user
+        all_locations = Location.objects.all()
+        return render(request, "travel/index.html", {"user":user, "all_locations": all_locations, "error":"Can't create!"})
 
 def show_location(request, location_id):
     if request.method == "GET":
@@ -157,16 +242,110 @@ def show_location(request, location_id):
             return render(request, "travel/show_location.html", {"user":user, "location":location, "destinations":destinations})
 
 def edit_location(request, location_id):
-    pass
+   if request.method == "GET":
+        user = request.user
+        if not user.is_authenticated:
+            return redirect("share:login")
+
+        location = get_object_or_404(Location, pk=location_id)
+        # destinations = Destination.objects.filter(location=location_id)
+
+        if location.traveler.user.id == location.traveler.user.id:
+            return render(request, "travel/edit_location.html", {"location":location})
+        else:
+            return render(request, "travel/index.html",
+            {"error":"You are not the author of the location that you tried to edit."})
 
 def update_location(request, location_id):
-    pass
+    if request.method == "POST":
+        user = request.user
+        if not user.is_authenticated:
+            return HttpResponse(status=500)
+
+        location = get_object_or_404(Location, pk=location_id)
+        # destinations = Destination.objects.filter(location=location_id)
+
+        if not request.POST["country"] or not request.POST["city"]:
+            return render(request, "travel/edit_location.html", {"location":location,
+            "error":"One of the required fields was empty"})
+
+        else:
+            country = request.POST["country"]
+            city  = request.POST["city"]
+
+            if location.traveler.user.id == user.id:
+                Location.objects.filter(pk=location_id).update(country=country,city=city)
+                return redirect("travel:dashboard")
+
+            else:
+                return render(request, "travel/edit_location.html",{"location":location, "error":"Can't update!"})
+
+    else:
+        # the user enteing    http://127.0.0.1:8000/problem/8/update
+        user = request.user
+        all_locations = Location.objects.all()
+        return render(request, "travel/index.html", {"user":user, "all_locations": all_locations, "error":"Can't update!"})
 
 def delete_location(request, location_id):
-    pass
+    if request.method == "POST":
+        user = request.user
+        if not user.is_authenticated:
+            return HttpResponse(status=500)
+
+        location = get_object_or_404(Location, pk=location_id)
+        # destinations = Destination.objects.filter(location=location_id)
+
+        if location.traveler.user.id == user.id:
+            Location.objects.get(pk=location_id).delete()
+            return redirect("travel:dashboard")
+        else:
+            all_locations = Location.objects.all()
+            return render(request, "travel/index.html", {"user":user, "all_locations": all_locations, "error":"Can't delete!"})
+
+    else:
+        return HttpResponse(status=500)
+
+# Reviews
+def publish_review(request, destination_id):
+    if request.method == "GET":
+        user = request.user
+        if not user.is_authenticated:
+            return redirect("travel:login")
+        else:
+            destination = get_object_or_404(Destination, pk=destination_id)
+            return render(request, "travel/create_review.html", {"user":user, "destination":destination} )
 
 def create_review(request, destination_id):
-    pass
+    if request.method == "POST":
+        user = request.user
+        if not user.is_authenticated:
+            return redirect("travel:login")
+
+        destination = get_object_or_404(Destination, pk=destination_id)
+
+        if not request.POST["title"] and not request.POST["feedback"]:
+            return render(request, "travel/create_review.html", {"user":user, "destination":destination, "error":"Please fill in all required fields"})
+        else:
+            traveler = user.traveler
+            title = request.POST["title"]
+            feedback = request.POST["feedback"]
+            stars = request.POST["stars"]
+
+        try:
+            review = Review.objects.create(traveler=traveler, destination=destination, feedback=feedback, title=title, stars=stars)
+            review.save()
+            review = get_object_or_404(Review, pk=review.id)
+            destination = get_object_or_404(Destination, pk=destination.id)
+            comments = Comment.objects.filter(review=review.id)
+            return render(request, "travel/show_review.html", {"traveler":traveler, "user":user, "destination": destination, "review": review, "comments": comments})
+
+        except:
+            return render(request, "travel/create_review.html", {"error":"Can't create the destination"})
+
+    else:
+        user = request.user
+        all_locations = Location.objects.all()
+        return render(request, "travel/index.html", {"user":user, "all_locations": all_locations, "error":"Can't create!"})
 
 def show_review(request, review_id):
     if request.method == "GET":
@@ -189,7 +368,18 @@ def update_review(request, review_id):
 def delete_review(request, review_id):
     pass
 
+# Comments
+def publish_comment(request, review_id):
+    if request.method == "GET":
+        user = request.user
+        if not user.is_authenticated:
+            return redirect("travel:login")
+        else:
+            review = get_object_or_404(Review, pk=review_id)
+            return render(request, "travel/create_comment.html", {"user":user, "review":review} )
+
 def create_comment(request, review_id):
+<<<<<<< HEAD
     pass
 
 def show_comment(request, review_id):
@@ -211,3 +401,32 @@ def update_comment(request, review_id):
 
 def delete_comment(request, review_id):
     pass
+=======
+    if request.method == "POST":
+        user = request.user
+        if not user.is_authenticated:
+            return redirect("travel:login")
+
+        review = get_object_or_404(Review, pk=review_id)
+
+        if not request.POST["body"]:
+            return render(request, "travel/create_comment.html", {"user":user, "review":review, "error":"Please fill in all required fields"})
+        else:
+            traveler = user.traveler
+            body = request.POST["body"]
+
+        try:
+            comment = Comment.objects.create(traveler=traveler, review=review, body=body)
+            comment.save()
+            comments = Comment.objects.filter(review=review_id)
+            destination = review.destination
+            return render(request, "travel/show_review.html", {"traveler":traveler, "user":user, "destination": destination, "review": review, "comments": comments})
+
+        except:
+            return render(request, "travel/create_comment.html", {"error":"Can't create the comment"})
+
+    else:
+        user = request.user
+        all_locations = Location.objects.all()
+        return render(request, "travel/index.html", {"user":user, "all_locations": all_locations, "error":"Can't create!"})
+>>>>>>> master

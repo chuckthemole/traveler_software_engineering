@@ -11,10 +11,11 @@ BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 
 # SECURITY WARNING: keep the secret key used in production secret!
 SECRET_KEY = config('SECRET_KEY')
+#SECRET_KEY = '8ok#oll1qc4=2)hbr4afddmdp#z9ed274$_$pu_oe1x36!%lsi'
 
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
-ALLOWED_HOSTS = ["*"]
+ALLOWED_HOSTS = ["https://traveler-final-project.herokuapp.com/"]
 
 # Application definition
 INSTALLED_APPS = [
@@ -64,13 +65,14 @@ WSGI_APPLICATION = 'traveler_software_engineering.wsgi.application'
 # This setting allow us to use the Heroku DB locally
 DATABASES = {
     'default': {
-        #'ENGINE': 'django.db.backends.sqlite3',
-        'ENGINE': 'django.db.backends.postgresql_psycopg2',
-        #'NAME': os.path.join(BASE_DIR, 'db.sqlite3'),
+#         'ENGINE': 'django.db.backends.sqlite3',
+    'ENGINE': 'django.db.backends.postgresql_psycopg2',
+#         'NAME': os.path.join(BASE_DIR, 'db.sqlite3'),
     }
 }
 
-DATABASES['default'] = dj_database_url.config(default=' ENTER URI FROM YOUR APP DB    ')
+#DATABASES['default'] = dj_database_url.config()
+DATABASES['default'] = dj_database_url.config(default='postgres://kbqvogagwdknwb:1a2bd480ba9997c8ee7982257e1aeb0dba9b33c2c93cc4736149dcb60743d710@ec2-52-207-93-32.compute-1.amazonaws.com:5432/de7sqp9uf3620a')
 # The content of default= '  '   is  found in Heroku app URI, starts with postgres://...
 # allow us to connect locally the DB is Heroku
 

@@ -33,7 +33,7 @@ comments: {{comments}} <br>
 
                       {% for r in comments %}
                         <div class="content">
-                            <br>Comment:<font color="red">{{ r.body }}, written by  {{r.traveler.user.username}}</font>
+                            <br>Comment: <font color="red">{{ r.body }}, written by  {{r.traveler.user.username}}</font>
                         </div>
                       {% endfor %}
 
@@ -53,7 +53,7 @@ comments: {{comments}} <br>
                   <br><br>
                   <!-- Module 9 -->
                   <a class="button is-primary is-medium"
-                      href="{% url 'travel:create_comment' review.id %}">Create a comment for this review ... </a>
+                      href="{% url 'travel:publish_comment' review.id %}">Create a comment for this review ... </a>
 
               </div>
           </div>

@@ -38,4 +38,34 @@ I want to list all the attributes of a particular location
 Route: location/<int:location_id>/show or show_location → views.show_location function → show_location.html
 >>>>>>> d4bd3fcecec0a6508aa367da3c5cbb0d06f92ec9
 
+Feature: Create a location
+As an authenticated user of the web site traveler
+I want to be able to create a location to be displayed
+So that I can show other users different locations I’m interested in
+Route: create → views.create_location → create_location.html
+Route: location/publish → views.publish_location, create_location.html
+Route: location/create → views.create_location, show_location.html
+
+Feature: Create a destination
+As an authenticated user of the web site traveler
+I want to be able to create a destination to be displayed
+So that I can show other users different destinations I’m interested in
+Route: destination/publish → views.publish_destination, create_destination.html
+Route: destination/create → views.create_destination, show_destination.html
+
+
+Feature: Create a review
+As an authenticated user of the web site traveler
+I want to be able to create a review to be displayed
+So that I can let other users know how I feel about a particular destination
+Route: review/publish → views.publish_review, create_review.html
+Route: review/create → views.create_review, show_review.html
+
+Feature: Create a comment
+As an authenticated user of the web site traveler
+I want to be able to create a comment for a review to be displayed
+So that I can let other users know how I feel about a their review
+Route: comment/publish → views.publish_comment, create_comment.html
+Route: comment/create → views.create_comment, show_review.html
+
 # source djangoenv/Scripts/activate
