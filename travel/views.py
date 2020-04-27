@@ -379,8 +379,33 @@ def publish_comment(request, review_id):
             return render(request, "travel/create_comment.html", {"user":user, "review":review} )
 
 def create_comment(request, review_id):
-#<<<<<<< HEAD
-    pass
+    if request.method == "POST":
+        user = request.user
+        if not user.is_authenticated:
+            return redirect("travel:login")
+
+        review = get_object_or_404(Review, pk=review_id)
+
+        if not request.POST["body"]:
+            return render(request, "travel/create_comment.html", {"user":user, "review":review, "error":"Please fill in all required fields"})
+        else:
+            traveler = user.traveler
+            body = request.POST["body"]
+
+        try:
+            comment = Comment.objects.create(traveler=traveler, review=review, body=body)
+            comment.save()
+            comments = Comment.objects.filter(review=review_id)
+            destination = review.destination
+            return render(request, "travel/show_review.html", {"traveler":traveler, "user":user, "destination": destination, "review": review, "comments": comments})
+
+        except:
+            return render(request, "travel/create_comment.html", {"error":"Can't create the comment"})
+
+    else:
+        user = request.user
+        all_locations = Location.objects.all()
+        return render(request, "travel/index.html", {"user":user, "all_locations": all_locations, "error":"Can't create!"})
 
 def show_comment(request, review_id):
     if request.method == "GET":
