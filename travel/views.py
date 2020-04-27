@@ -53,7 +53,7 @@ def dashboard(request):
             my_locations = Location.objects.filter(traveler=user.traveler.id)
             #my_problems = Problem.objects.filter(coder=user.coder.id)   # Problem table has a coder field (FK)
             #my_scripts =  Script.objects.filter(coder=user.coder.id)
-            
+
             my_locations = Location.objects.filter(traveler=user.traveler.id)   # Problem table has a coder field (FK)
 
             print('*********** Testing objs retrieved from DB ************')
@@ -61,11 +61,11 @@ def dashboard(request):
             #print('my_scripts:', my_scripts)
             print('*******************************')
 
-<<<<<<< HEAD
+#<<<<<<< HEAD
             return render(request, "travel/dashboard.html", {"user":user, "my_locations": my_locations})
-=======
+#=======
             return render(request, "travel/dashboard.html", {"user":user, "my_locations":my_locations})
->>>>>>> master
+#>>>>>>> master
 
 def create(request):
     if request.method == "POST":
@@ -379,7 +379,7 @@ def publish_comment(request, review_id):
             return render(request, "travel/create_comment.html", {"user":user, "review":review} )
 
 def create_comment(request, review_id):
-<<<<<<< HEAD
+#<<<<<<< HEAD
     pass
 
 def show_comment(request, review_id):
@@ -401,7 +401,7 @@ def update_comment(request, review_id):
 
 def delete_comment(request, review_id):
     pass
-=======
+#=======
     if request.method == "POST":
         user = request.user
         if not user.is_authenticated:
@@ -429,4 +429,4 @@ def delete_comment(request, review_id):
         user = request.user
         all_locations = Location.objects.all()
         return render(request, "travel/index.html", {"user":user, "all_locations": all_locations, "error":"Can't create!"})
->>>>>>> master
+#>>>>>>> master
