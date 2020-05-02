@@ -7,8 +7,8 @@ class Traveler(models.Model):
 	def __str__(self):
 		return self.user.username
 
-	traveler_yet = models.BooleanField(default=False)  # Are you a travler
-	local = models.BooleanField(default=False) #Are you a local
+	traveler_yet = models.BooleanField(default=False)  # the user is not a coder yet
+	local = models.BooleanField(default=False)
 	user = models.OneToOneField(User, on_delete=models.CASCADE)
 	created = models.DateField(auto_now=True)   # maybe redundant, user model has date_joined :)
 	updated = models.DateField(auto_now=True)
@@ -16,12 +16,12 @@ class Traveler(models.Model):
 class Location(models.Model):
 	def __str__(self):
 		return self.city
-
 	def num_of_destinations(self):
 		destinations = Destination.objects.filter(location=self)
 		return len(destinations)
 	#FK
 	traveler = models.ForeignKey(Traveler, on_delete=models.CASCADE)
+
 	country = models.TextField(max_length=30, null=False, blank=False, unique=False)
 	city = models.TextField(max_length=30, null=False, blank=False, unique=False)
 	#image = models.ImageField(upload_to='myproblems/', blank=True)
