@@ -33,7 +33,7 @@ comments: {{comments}} <br>
 
                       {% for r in comments %}
                         <div class="content">
-                            <br>Comment:<font color="red">{{ r.body }}, written by  {{r.traveler.user.username}}</font>
+                            <br>Comment:<font color="red"> {{ r.body }} <br> Written by  {{r.traveler.user.username}}</font>
                         </div>
                       {% endfor %}
 

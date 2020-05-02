@@ -50,17 +50,15 @@ def dashboard(request):
         if not user.is_authenticated:
             return redirect("travel:login")
         else:
-            #my_problems = Problem.objects.filter(coder=user.coder.id)   # Problem table has a coder field (FK)
-            #my_scripts =  Script.objects.filter(coder=user.coder.id)
-            
             my_locations = Location.objects.filter(traveler=user.traveler.id)   # Problem table has a coder field (FK)
+            my_reviews = Review.objects.filter(traveler=user.traveler.id)   # Problem table has a coder field (FK)
 
             print('*********** Testing objs retrieved from DB ************')
-            #print('my_problems:', my_problems)
-            #print('my_scripts:', my_scripts)
+            print('my_locations:', my_locations)
+            print('my_reviews:', my_reviews)
             print('*******************************')
 
-            return render(request, "travel/dashboard.html", {"user":user, "my_locations": my_locations})
+            return render(request, "travel/dashboard.html", {"user":user, "my_locations": my_locations, "my_reviews": my_reviews})
 
 def create(request):
     if request.method == "POST":
