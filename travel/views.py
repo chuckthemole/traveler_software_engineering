@@ -131,7 +131,19 @@ def show_destination(request, destination_id):
             return render(request, "travel/show_destination.html", {"user":user, "destination":destination, "reviews":reviews})
 
 def edit_destination(request, destination_id):
-    pass
+    if request.method == "GET":
+        user = request.user
+        if not user.is_authenticated:
+            return redirect("share:login")
+
+        destination = get_object_or_404(destination, pk=destination_id)
+        # destinations = Destination.objects.filter(location=location_id)
+
+        if destination.traveler.user.id == destination.traveler.user.id:
+            return render(request, "travel/edit_destination.html", {"destination":destination})
+        else:
+            return render(request, "travel/index.html",
+            {"error":"You are not the author of the destination that you tried to edit."})
 
 def update_destination(request, destination_id):
     pass
@@ -179,7 +191,21 @@ def show_review(request, review_id):
             return render(request, "travel/show_review.html", {"user":user, "review":review, "comments":comments})
 
 def edit_review(request, review_id):
-    pass
+    if request.method == "GET":
+        user = request.user
+        if not user.is_authenticated:
+            return redirect("share:login")
+
+        review = get_object_or_404(review, pk=review_id)
+        # destinations = Destination.objects.filter(location=location_id)
+
+        if review.traveler.user.id == review.traveler.user.id:
+            return render(request, "travel/edit_review.html", {"review":review})
+        else:
+            return render(request, "travel/index.html",
+            {"error":"You are not the author of the review that you tried to edit."})
+
+
 
 def update_review(request, review_id):
     pass
